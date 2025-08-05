@@ -63,13 +63,13 @@ const NavBar = () => {
         </div>
         
         {/* Mobile menu button */}
-        <IconButton
-          variant="ghost"
-          className="md:hidden"
+        <button 
+          data-accent-color="" 
+          className="rt-reset rt-BaseButton rt-r-size-2 rt-variant-ghost rt-IconButton md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <Cross1Icon /> : <HamburgerMenuIcon />}
-        </IconButton>
+        </button>
       </nav>
       
       {/* Mobile menu dropdown */}
