@@ -86,7 +86,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
       width: isMobile ? "100vw" : "240px",
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 300,
         damping: 30,
       },
@@ -95,7 +95,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
       width: 0,
       opacity: isMobile ? 0 : 1, // 移动端完全透明
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 300,
         damping: 30,
       },
