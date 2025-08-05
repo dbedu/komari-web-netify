@@ -277,7 +277,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedNodes.map((node) => {
+          {sortedNodes.map((node, index) => {
             const isOnline = onlineNodes.includes(node.uuid);
             const nodeData = getNodeData(node.uuid);
             const isExpanded = expandedRows.has(node.uuid);

@@ -4,6 +4,7 @@ import { Box } from "@radix-ui/themes";
 interface FlagProps {
   flag: string; // 地区代码 (例如 "SG", "US") 或旗帜 emoji (例如 "🇸🇬", "🇺🇳")
   size?: string; // 可选的尺寸 prop，用于未来扩展
+  className?: string; // 可选的 className prop，用于自定义样式
 }
 
 /**
@@ -44,7 +45,7 @@ const getCountryCodeFromFlagEmoji = (emoji: string): string | null => {
   return null;
 };
 
-const Flag = React.memo(({ flag, size }: FlagProps) => {
+const Flag = React.memo(({ flag, size, className }: FlagProps) => {
   let imgSrc: string;
   let altText: string;
   let resolvedFlagFileName: string; // 最终用于构建文件名的字符串 (例如 "SG", "UN")
@@ -78,7 +79,7 @@ const Flag = React.memo(({ flag, size }: FlagProps) => {
   return (
     <Box
       as="span"
-      className={`m-2 self-center ${size ? `w-${size} h-${size}` : "w-6 h-6"}`}
+      className={`m-2 self-center ${size ? `w-${size} h-${size}` : "w-6 h-6"} ${className || ''}`}
       style={{ display: "inline-flex", alignItems: "center" }}
       aria-label={altText}
     >
