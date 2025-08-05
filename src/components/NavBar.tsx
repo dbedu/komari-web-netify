@@ -65,7 +65,7 @@ const NavBar = () => {
         {/* Mobile menu button */}
         <button 
           data-accent-color="" 
-          className="rt-reset rt-BaseButton rt-r-size-2 rt-variant-ghost rt-IconButton md:hidden"
+          className="rt-reset rt-BaseButton rt-r-size-2 rt-variant-ghost rt-IconButton block md:!hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <Cross1Icon /> : <HamburgerMenuIcon />}
@@ -74,7 +74,7 @@ const NavBar = () => {
       
       {/* Mobile menu dropdown */}
       {mobileMenuOpen && (
-        <Box className="md:hidden fixed top-16 right-0 left-0 z-40 bg-background/95 backdrop-blur-md shadow-md p-4 border-t border-border animate-in slide-in-from-top duration-300">
+        <Box className="block md:!hidden fixed top-16 right-0 left-0 z-40 bg-background/95 backdrop-blur-md shadow-md p-4 border-t border-border animate-in slide-in-from-top duration-300">
           <Flex direction="column" gap="3" align="center">
             <Flex gap="2" className="w-full justify-center">
               <ThemeSwitch />
