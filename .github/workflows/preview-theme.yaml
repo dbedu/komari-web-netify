@@ -20,7 +20,7 @@ jobs:
         cache: 'npm'
         
     - name: Install dependencies
-      run: npm i
+      run: npm ci --prefer-offline --no-audit
       
     - name: Build project
       run: npm run build
@@ -46,34 +46,22 @@ jobs:
         echo "Updated theme configuration:"
         cat komari-theme.json
         
-    - name: Verify required files exist
-      run: |
-        echo "Checking required files..."
-        ls -la preview.png || (echo "preview.png not found" && exit 1)
-        ls -la komari-theme.json || (echo "komari-theme.json not found" && exit 1)
-        ls -la dist/ || (echo "dist/ directory not found" && exit 1)
-        echo "All required files found!"
-        
     - name: Create theme package
       run: |
-        # Create a temporary directory for the package
-        mkdir -p theme-package
+        # Verify required files exist and create package
+        echo "Checking required files..."
+        [[ -f preview.png ]] || (echo "preview.png not found" && exit 1)
+        [[ -f komari-theme.json ]] || (echo "komari-theme.json not found" && exit 1)
+        [[ -d dist ]] || (echo "dist/ directory not found" && exit 1)
+        echo "All required files found!"
         
-        # Copy required files
-        cp preview.png theme-package/
-        cp komari-theme.json theme-package/
-        cp -r dist/ theme-package/
-        
-        # Create zip file with version and commit hash
+        # Create zip file directly without temporary directory
         ZIP_NAME="komari-theme-v${VERSION_DATE}-${COMMIT_HASH}.zip"
-        
-        cd theme-package
-        zip -r ../${ZIP_NAME} .
-        cd ..
+        zip -r ${ZIP_NAME} preview.png komari-theme.json dist/
         
         echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
         echo "Created package: ${ZIP_NAME}"
-        ls -la ${ZIP_NAME}
+        ls -lh ${ZIP_NAME}
         
     - name: Upload theme as artifacts
       uses: actions/upload-artifact@v4

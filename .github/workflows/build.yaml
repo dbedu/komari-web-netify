@@ -18,26 +18,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --prefer-offline --no-audit
 
       - name: Build project
         run: npm run build
         
-      - name: Archive build artifacts
+      - name: Archive and upload build artifacts
         run: |
-          cd dist
-          zip -r ../dist-release.zip .
-          cd ..
-        # 将 dist 文件夹压缩为 dist-release.zip
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+          # Create zip file more efficiently
+          zip -r dist-release.zip dist/
+          
+          # Upload using GitHub CLI (more reliable than deprecated action)
+          gh release upload ${{ github.event.release.tag_name }} dist-release.zip --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }} # 获取上传到 Release 的 URL
-          asset_path: ./dist-release.zip # 要上传的文件的路径
-          asset_name: dist-release.zip # 在 Release 中显示的文件名
-          asset_content_type: application/zip # 文件类型
