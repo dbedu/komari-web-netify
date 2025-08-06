@@ -7,20 +7,20 @@ type LoadingProps = {
 };
 
 const Loading = ({ text, children, size }: LoadingProps) => {
+
   return (
     <div className="flex items-center justify-center flex-col min-h-[200px] p-8">
-      {/* Clean Apple-style Loading Spinner - No Container */}
-      <div className="relative mb-6">
+      {/* Apple-style Loading Spinner */}
+      <div className="relative mb-8">
         <div className="loader flex items-center justify-center">
-          {/* Apple-style SVG spinner */}
           <svg 
             className="circular" 
-            viewBox="25 25 50 50" 
-            style={{ 
-              width: `${size || 80}px`, 
-              height: `${size || 80}px`,
-              transform: `scale(${size ? size * 0.01 : 1})`,
-              transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+            width="40" 
+            height="40" 
+            viewBox="25 25 50 50"
+            style={{
+              transform: `scale(${size ? size * 0.1 : 1})`,
+              transition: "transform 0.3s ease-out",
             }}
           >
             <circle
@@ -29,7 +29,7 @@ const Loading = ({ text, children, size }: LoadingProps) => {
               cy="50"
               r="20"
               fill="none"
-              strokeWidth="2.5"
+              strokeWidth="2"
               strokeMiterlimit="10"
             />
           </svg>
@@ -37,13 +37,16 @@ const Loading = ({ text, children, size }: LoadingProps) => {
       </div>
 
       {/* Loading Text */}
-      {text && (
-        <div className="text-center space-y-4 max-w-md">
-          <h3 className="text-lg font-medium bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse">
+      <div className="text-center space-y-2 max-w-md">
+        <p className="text-base font-medium text-gray-600">
+          Loading...
+        </p>
+        {text && (
+          <p className="text-sm text-gray-500 leading-relaxed">
             {text}
-          </h3>
-        </div>
-      )}
+          </p>
+        )}
+      </div>
 
       {/* Children Content */}
       {children && (
