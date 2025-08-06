@@ -4,8 +4,19 @@ on:
   push:
     tags:
       - 'v*'
-      - 'auo-release-*'
   workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release Type'
+        required: true
+        default: 'manual'
+        type: choice
+        options:
+          - manual
+          - beta
+          - stable
+  schedule:
+    - cron: '0 16 * * *'  # UTC 16:00 = 北京时间 00:00
 
 jobs:
   build-and-release:
@@ -180,60 +191,86 @@ jobs:
           echo "=== Final changelog ==="
           cat changelog.txt
       
-      - name: Create Release
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          name: Release ${{ github.ref_name }}
-          body: |
-            ## 🎨 Komari Web Mochi Theme Release
-            
-            **Version:** ${{ steps.version.outputs.version }}
-            **Commit:** ${{ steps.version.outputs.commit }}
-            
-            ### 📦 Installation
-            1. Download the theme package below
-            2. Upload it to your Komari instance
-            3. Apply the theme in settings
-            
-            ### 🔄 What's Changed
-            $(cat changelog.txt)
-            
-            ### 📋 Theme Information
-            ```json
-            $(cat komari-theme.json)
-            ```
-          draft: false
-          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') || contains(github.ref, 'rc') }}
-          files: |
-            ${{ steps.version.outputs.zip_name }}
-          body_path: changelog.txt
+      - name: Set Release Tag
+        id: set_tag
+        run: |
+          # 根据不同触发方式设置标签
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            # 自动每日构建
+            TAG_NAME="auto-release-$(date +%Y%m%d)"
+            RELEASE_TYPE="daily"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # 手动触发
+            case "${{ github.event.inputs.release_type }}" in
+              "manual")
+                TAG_NAME="manual-release-$(date +%Y%m%d-%H%M%S)"
+                RELEASE_TYPE="manual"
+                ;;
+              "beta")
+                TAG_NAME="beta-$(date +%Y%m%d-%H%M%S)"
+                RELEASE_TYPE="beta"
+                ;;
+              "stable")
+                TAG_NAME="v$(date +%Y.%m.%d)"
+                RELEASE_TYPE="stable"
+                ;;
+            esac
+          elif [[ "${{ github.event_name }}" == "push" ]] && [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            # 标签推送
+            TAG_NAME="${{ github.ref_name }}"
+            RELEASE_TYPE="tag"
+          fi
+
+          # 检查标签是否存在并添加时间戳
+          if [ "$RELEASE_TYPE" != "tag" ] && git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            TAG_NAME="${TAG_NAME}-$(date +%H%M%S)"
+          fi
+
+          # 创建并推送标签（除非是已存在的标签推送）
+          if [ "$RELEASE_TYPE" != "tag" ]; then
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+            git push origin "$TAG_NAME"
+          fi
+
+          # 设置输出和环境变量
+          echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "type=$RELEASE_TYPE" >> $GITHUB_OUTPUT
+          echo "RELEASE_TAG=$TAG_NAME" >> $GITHUB_ENV
+          echo "RELEASE_TYPE=$RELEASE_TYPE" >> $GITHUB_ENV
 
       - name: Create Release
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ startsWith(github.ref_name, 'auto-release-') && 'Auto Release' || format('Release {0}', github.ref_name) }}
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: |
+            ${{ env.RELEASE_TYPE == 'daily' && format('Daily Release {0}', env.RELEASE_TAG) ||
+                env.RELEASE_TYPE == 'manual' && format('Manual Release {0}', env.RELEASE_TAG) ||
+                env.RELEASE_TYPE == 'beta' && format('Beta Release {0}', env.RELEASE_TAG) ||
+                format('Release {0}', env.RELEASE_TAG) }}
           body: |
             ## 🎨 Komari Web Mochi Theme Release
-              
+            
+            **Build Type:** ${{ env.RELEASE_TYPE }}
+            **Build Date:** $(date +"%Y-%m-%d %H:%M:%S")
             **Version:** ${{ steps.version.outputs.version }}
             **Commit:** ${{ steps.version.outputs.commit }}
-              
+            
             ### 📦 Installation
             1. Download the theme package below
             2. Upload it to your Komari instance
             3. Apply the theme in settings
-              
+            
             ### 🔄 What's Changed
             $(cat changelog.txt)
-              
+            
             ### 📋 Theme Information
             ```json
             $(cat komari-theme.json)
             ```
           draft: false
-          prerelease: ${{ contains(github.ref_name, 'auto-release-') }}
+          prerelease: ${{ env.RELEASE_TYPE == 'daily' || env.RELEASE_TYPE == 'beta' }}
           files: |
             ${{ steps.version.outputs.zip_name }}
           body_path: changelog.txt
