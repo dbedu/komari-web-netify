@@ -19,7 +19,7 @@
 }
 
 .circular {
-  animation: rotate 2s linear infinite;
+  animation: rotate 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   height: 100%;
   transform-origin: center center;
   width: 100%;
@@ -29,48 +29,78 @@
   left: 0;
   right: 0;
   margin: auto;
+  filter: drop-shadow(0 0 8px hsla(var(--primary), 0.3));
 }
 
 .path {
   stroke-dasharray: 1, 200;
   stroke-dashoffset: 0;
-  animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+  animation: dash 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite, 
+             color 3.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   stroke-linecap: round;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Apple-style smooth rotation */
 @keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
   100% {
     transform: rotate(360deg);
   }
 }
 
+/* Refined dash animation with Apple-style easing */
 @keyframes dash {
   0% {
     stroke-dasharray: 1, 200;
     stroke-dashoffset: 0;
   }
   50% {
-    stroke-dasharray: 89, 200;
+    stroke-dasharray: 90, 200;
     stroke-dashoffset: -35px;
   }
   100% {
-    stroke-dasharray: 89, 200;
-    stroke-dashoffset: -124px;
+    stroke-dasharray: 90, 200;
+    stroke-dashoffset: -125px;
   }
 }
 
+/* Smooth color transition with Apple-style timing */
 @keyframes color {
-  0% {
+  0%, 100% {
     stroke: var(--loading-primary);
-    opacity: 1;
+    opacity: 0.9;
   }
-  50% {
+  25% {
     stroke: var(--loading-accent);
     opacity: 0.8;
   }
-  100% {
-    stroke: var(--loading-primary);
-    opacity: 1;
+  50% {
+    stroke: hsl(var(--primary) / 0.7);
+    opacity: 0.85;
+  }
+  75% {
+    stroke: var(--loading-accent);
+    opacity: 0.8;
+  }
+}
+
+/* Apple-style container hover effect */
+.loader:hover .circular {
+  animation-duration: 1.2s;
+  filter: drop-shadow(0 0 12px hsla(var(--primary), 0.4));
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  :root {
+    --loading-width: 60px;
+  }
+  
+  .circular {
+    filter: drop-shadow(0 0 6px hsla(var(--primary), 0.25));
   }
 }
 
