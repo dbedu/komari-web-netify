@@ -1,4 +1,6 @@
 import "./Loading.css"
+import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type LoadingProps = {
   text?: string;
@@ -7,6 +9,31 @@ type LoadingProps = {
 };
 
 const Loading = ({ text, children, size }: LoadingProps) => {
+  const isMobile = useIsMobile();
+  const [gifLoaded, setGifLoaded] = useState(false);
+  const [gifError, setGifError] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
+
+  useEffect(() => {
+    // On mobile, show fallback after 3 seconds if GIF hasn't loaded
+    if (isMobile && !gifLoaded && !gifError) {
+      const timer = setTimeout(() => {
+        setShowFallback(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isMobile, gifLoaded, gifError]);
+
+  const handleGifLoad = () => {
+    setGifLoaded(true);
+    setShowFallback(false);
+  };
+
+  const handleGifError = () => {
+    setGifError(true);
+    setShowFallback(true);
+  };
+
   return (
     <div className="flex items-center justify-center flex-col min-h-[200px] p-8">
       {/* Loading Spinner Container */}
@@ -19,12 +46,35 @@ const Loading = ({ text, children, size }: LoadingProps) => {
           }}
         >
           <div className="loader flex items-center justify-center">
-            <img 
-              src="/assets/BlueArchive-loading.gif" 
-              alt="Loading..." 
-              className="w-20 h-20 object-contain"
-              style={{ maxWidth: "100%", height: "auto" }}
-            />
+            {/* Show GIF if loaded or loading, fallback SVG if needed */}
+            {!showFallback ? (
+              <img 
+                src="/assets/BlueArchive-loading.gif" 
+                alt="Loading..." 
+                className="w-20 h-20 object-contain"
+                style={{ 
+                  maxWidth: "100%", 
+                  height: "auto",
+                  display: gifError ? 'none' : 'block'
+                }}
+                onLoad={handleGifLoad}
+                onError={handleGifError}
+                loading="eager"
+              />
+            ) : (
+              // Fallback SVG spinner for mobile or when GIF fails
+              <svg className="circular w-20 h-20" viewBox="25 25 50 50">
+                <circle
+                  className="path"
+                  cx="50"
+                  cy="50"
+                  r="20"
+                  fill="none"
+                  strokeWidth="3"
+                  strokeMiterlimit="10"
+                />
+              </svg>
+            )}
           </div>
         </div>
       </div>
