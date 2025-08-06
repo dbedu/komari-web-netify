@@ -18,18 +18,13 @@ const Loading = ({ text, children, size }: LoadingProps) => {
             transition: "transform 0.3s ease-out",
           }}
         >
-          <div className="loader">
-            <svg className="circular" viewBox="25 25 50 50">
-              <circle
-                className="path"
-                cx="50"
-                cy="50"
-                r="20"
-                fill="none"
-                strokeWidth="3"
-                strokeMiterlimit="10"
-              />
-            </svg>
+          <div className="loader flex items-center justify-center">
+            <img 
+              src="/assets/BlueArchive-loading.gif" 
+              alt="Loading..." 
+              className="w-20 h-20 object-contain"
+              style={{ maxWidth: "100%", height: "auto" }}
+            />
           </div>
         </div>
       </div>
