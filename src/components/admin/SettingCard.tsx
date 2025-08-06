@@ -240,7 +240,7 @@ export function SettingCardIconButton({
 export function SettingCardShortTextInput({
   title = "",
   description = "",
-  label = useTranslation().t("save"),
+  label,
   defaultValue = "",
   number = false,
   OnSave = () => {},
@@ -262,6 +262,8 @@ export function SettingCardShortTextInput({
   isSaving?: boolean;
   bordless?: boolean;
 }) {
+  const { t } = useTranslation();
+  const saveLabel = label || t("save");
   const [disabled, setDisabled] = React.useState(false);
   const savingState = isSaving !== undefined ? isSaving : disabled;
   const [value, setValue] = React.useState(defaultValue);
@@ -305,7 +307,7 @@ export function SettingCardShortTextInput({
           variant="solid"
           disabled={savingState}
         >
-          {label}
+          {saveLabel}
         </Button>
       </Flex>
     </SettingCard>

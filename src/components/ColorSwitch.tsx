@@ -26,11 +26,11 @@ const ColorSwitch = ({
     "gray", "gold", "bronze", "brown", "yellow", "amber", "orange", "tomato",
     "red", "ruby", "crimson", "pink", "plum", "purple", "violet", "iris",
     "indigo", "blue", "cyan", "teal", "jade", "green", "grass", "lime", "mint", "sky"
-  ];
+  ] as const;
 
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger asChild>
+      <DropdownMenu.Trigger>
           {icon}
       </DropdownMenu.Trigger>
       <DropdownMenu.Content 
@@ -47,7 +47,7 @@ const ColorSwitch = ({
               className={`w-3 h-3 rounded-full border border-border/30 flex-shrink-0`}
               style={{ backgroundColor: `var(--${color}-9)` }}
             />
-            <Text color={color as any} className="flex-1">
+            <Text color={color} className="flex-1">
               {t(`color.${color}`)}
             </Text>
           </DropdownMenu.Item>

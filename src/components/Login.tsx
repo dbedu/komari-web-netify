@@ -210,7 +210,7 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
                   disabled={isLoading || !isFormValid}
                   onClick={handleLogin}
                   className="w-full"
-                  size="lg"
+                  size="3"
                 >
                   {isLoading ? "Logging in..." : t("login.title")}
                 </Button>
@@ -232,7 +232,7 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
                   disabled={isLoading}
                   type="button"
                   className="w-full"
-                  size="lg"
+                  size="3"
                 >
                   {t(
                     "login.login_with",
