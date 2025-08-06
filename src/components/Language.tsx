@@ -14,7 +14,11 @@ const languages: { code: string; name: string }[] = [
 
 const LanguageSwitch = ({
   icon = (
-    <IconButton variant="soft">
+    <IconButton 
+      variant="soft" 
+      radius="full"
+      className="transition-all duration-200 hover:scale-105 hover:shadow-md backdrop-blur-sm"
+    >
       <svg xmlns="http://www.w3.org/2000/svg" width="50%" viewBox="0 0 24 24">
         <g fill="none">
           <path
@@ -29,14 +33,23 @@ const LanguageSwitch = ({
   const { i18n } = useTranslation();
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger>{icon}</DropdownMenu.Trigger>
-      <DropdownMenu.Content>
+      <DropdownMenu.Trigger asChild>{icon}</DropdownMenu.Trigger>
+      <DropdownMenu.Content 
+        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[160px]"
+        sideOffset={8}
+      >
         {languages.map((lang) => (
           <DropdownMenu.Item
             key={lang.code}
             onClick={() => i18n.changeLanguage(lang.code)}
+            className="rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-accent/10 hover:text-accent-foreground cursor-pointer focus:bg-accent/10 focus:text-accent-foreground outline-none flex items-center gap-2"
           >
-            {lang.name}
+            <span className="text-xs opacity-60 font-mono uppercase tracking-wider flex-shrink-0">
+              {lang.code.split('-')[0]}
+            </span>
+            <span className="flex-1">
+              {lang.name}
+            </span>
           </DropdownMenu.Item>
         ))}
       </DropdownMenu.Content>

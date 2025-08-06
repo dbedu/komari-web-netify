@@ -37,36 +37,56 @@ const Footer = () => {
     fetchVersionInfo();
   }, []);
   return (
-    <div
-      className='footer p-2 border-t-1 border-t-[var(--gray-7)]'
+    <footer
+      className='footer mt-auto bg-background/80 backdrop-blur-xl border-t border-border/20 shadow-lg'
     >
-      <Flex
-        direction={{ initial: 'column', md: 'row' }}
-        justify="between"
-        align={{ initial: 'center', md: 'start' }}
-        gap="4"
-        style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-        }}
-      >
-        {/* Copyright and ICP Filing */}
-        <Flex direction="column" gap="2" align={{ initial: 'center', md: 'start' }}>
-          <Text size="2" color="gray">
-             Powered by Komari Monitor.
-          </Text>
-          {buildTime && (
-            <Text size="1" color="gray">
-              Build Time: {formatBuildTime(buildTime)}
+      <div className="px-6 py-8">
+        <Flex
+          direction={{ initial: 'column', md: 'row' }}
+          justify="between"
+          align={{ initial: 'center', md: 'start' }}
+          gap="6"
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+          }}
+        >
+          {/* Main Content */}
+          <Flex direction="column" gap="3" align={{ initial: 'center', md: 'start' }}>
+            <Text 
+              size="3" 
+              weight="medium"
+              className="bg-gradient-to-r from-primary to-accent-foreground bg-clip-text text-transparent"
+            >
+              Powered by Komari Monitor
             </Text>
-          )}
-          <Text size="1" color="gray">
-            {versionInfo && `${versionInfo.version} (${versionInfo.hash})`}
-          </Text>
-        </Flex>
+            
+            <Flex direction="column" gap="1" align={{ initial: 'center', md: 'start' }}>
+              {buildTime && (
+                <Text size="2" color="gray" className="opacity-75 transition-opacity hover:opacity-100">
+                  Build: {formatBuildTime(buildTime)}
+                </Text>
+              )}
+              {versionInfo && (
+                <Text size="2" color="gray" className="opacity-75 transition-opacity hover:opacity-100 font-mono">
+                  v{versionInfo.version} ({versionInfo.hash})
+                </Text>
+              )}
+            </Flex>
+          </Flex>
 
-      </Flex>
-    </div>
+          {/* Additional Info Section */}
+          <Flex direction="column" gap="2" align={{ initial: 'center', md: 'end' }}>
+            <Text size="2" color="gray" className="opacity-60">
+              © {new Date().getFullYear()} Komari Monitor
+            </Text>
+            <Text size="1" color="gray" className="opacity-50">
+              Crafted with precision
+            </Text>
+          </Flex>
+        </Flex>
+      </div>
+    </footer>
   );
 };
 

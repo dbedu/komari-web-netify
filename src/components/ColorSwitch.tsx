@@ -10,7 +10,11 @@ interface ColorSwitchProps {
 
 const ColorSwitch = ({ 
   icon = (
-    <IconButton variant="soft">
+    <IconButton 
+      variant="soft" 
+      radius="full"
+      className="transition-all duration-200 hover:scale-105 hover:shadow-md backdrop-blur-sm"
+    >
       <BlendingModeIcon />
     </IconButton>
   ),
@@ -18,38 +22,36 @@ const ColorSwitch = ({
   const { setColor } = useContext(ThemeContext);
   const { t } = useTranslation();
 
+  const colorItems = [
+    "gray", "gold", "bronze", "brown", "yellow", "amber", "orange", "tomato",
+    "red", "ruby", "crimson", "pink", "plum", "purple", "violet", "iris",
+    "indigo", "blue", "cyan", "teal", "jade", "green", "grass", "lime", "mint", "sky"
+  ];
+
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger>
+      <DropdownMenu.Trigger asChild>
           {icon}
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content>
-        <DropdownMenu.Item onSelect={() => setColor("gray")}><Text color="gray">{t('color.gray')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("gold")}><Text color="gold">{t('color.gold')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("bronze")}><Text color="bronze">{t('color.bronze')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("brown")}><Text color="brown">{t('color.brown')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("yellow")}><Text color="yellow">{t('color.yellow')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("amber")}><Text color="amber">{t('color.amber')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("orange")}><Text color="orange">{t('color.orange')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("tomato")}><Text color="tomato">{t('color.tomato')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("red")}><Text color="red">{t('color.red')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("ruby")}><Text color="ruby">{t('color.ruby')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("crimson")}><Text color="crimson">{t('color.crimson')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("pink")}><Text color="pink">{t('color.pink')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("plum")}><Text color="plum">{t('color.plum')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("purple")}><Text color="purple">{t('color.purple')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("violet")}><Text color="violet">{t('color.violet')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("iris")}><Text color="iris">{t('color.iris')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("indigo")}><Text color="indigo">{t('color.indigo')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("blue")}><Text color="blue">{t('color.blue')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("cyan")}><Text color="cyan">{t('color.cyan')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("teal")}><Text color="teal">{t('color.teal')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("jade")}><Text color="jade">{t('color.jade')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("green")}><Text color="green">{t('color.green')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("grass")}><Text color="grass">{t('color.grass')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("lime")}><Text color="lime">{t('color.lime')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("mint")}><Text color="mint">{t('color.mint')}</Text></DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setColor("sky")}><Text color="sky">{t('color.sky')}</Text></DropdownMenu.Item>
+      <DropdownMenu.Content 
+        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[160px] max-h-[320px] overflow-y-auto"
+        sideOffset={8}
+      >
+        {colorItems.map((color) => (
+          <DropdownMenu.Item 
+            key={color}
+            onSelect={() => setColor(color)}
+            className="rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-accent/10 hover:text-accent-foreground cursor-pointer focus:bg-accent/10 focus:text-accent-foreground outline-none flex items-center gap-2"
+          >
+            <div 
+              className={`w-3 h-3 rounded-full border border-border/30 flex-shrink-0`}
+              style={{ backgroundColor: `var(--${color}-9)` }}
+            />
+            <Text color={color as any} className="flex-1">
+              {t(`color.${color}`)}
+            </Text>
+          </DropdownMenu.Item>
+        ))}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   );

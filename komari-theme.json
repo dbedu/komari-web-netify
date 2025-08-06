@@ -1,9 +1,9 @@
 {
-    "name": "Komari Preview",
-    "short": "KomariPreview", 
-    "description": "Preview theme for Komari Monitor",
+    "name": "Komari Netify",
+    "short": "KomariNetify",
+    "description": "Modified theme for Komari Monitor",
     "version": "1.0.0",
-    "author": "Akizon77",
-    "url": "https://github.com/komari-monitor/komari-web",
+    "author": "天道总司",
+    "url": "https://github.com/dbedu/komari-web-netify",
     "preview": "preview.png"
 }

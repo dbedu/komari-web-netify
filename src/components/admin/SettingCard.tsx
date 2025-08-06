@@ -45,11 +45,10 @@ export function SettingCard({
       justify="between"
       align="center"
       wrap="wrap"
-      style={{ borderColor: "var(--gray-a5)" }}
       className={
         bordless
           ? "border-0"
-          : "border-1 rounded-md py-2 px-4 bg-transparent  min-h-8" + className
+          : `backdrop-blur-sm bg-background/60 border border-border/30 rounded-2xl p-6 shadow-md hover:shadow-lg hover:bg-background/80 transition-all duration-200 min-h-16 ${className}`
       }
     >
       <Flex
@@ -62,22 +61,26 @@ export function SettingCard({
       >
         <Flex
           direction="column"
-          gap="1"
-          className="min-h-10"
+          gap="2"
+          className="min-h-12"
           justify={"center"}
         >
-          <label className="text-base font-medium" style={{ fontWeight: 600 }}>
+          <label className="text-lg font-semibold text-foreground/90 leading-tight">
             {title}
           </label>
           {description && (
-            <label className="text-sm text-muted-foreground">
+            <label className="text-sm text-muted-foreground/80 leading-relaxed">
               {description}
             </label>
           )}
         </Flex>
         {actionChild}
       </Flex>
-      {otherChildren}
+      {otherChildren && (
+        <div className="w-full mt-4 pt-4 border-t border-border/20">
+          {otherChildren}
+        </div>
+      )}
     </Flex>
   );
 }

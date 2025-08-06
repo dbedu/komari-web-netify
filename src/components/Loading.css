@@ -1,11 +1,9 @@
-/* CSS Variables */
+/* CSS Variables - Apple Design System */
 :root {
-  --loading-green: #008744;
-  --loading-blue: #0057e7;
-  --loading-red: #d62d20;
-  --loading-yellow: #ffa700;
-  --loading-white: #eee;
-  --loading-width: 100px;
+  --loading-primary: hsl(var(--primary));
+  --loading-accent: hsl(var(--accent));
+  --loading-muted: hsl(var(--muted-foreground));
+  --loading-width: 80px;
 }
 
 .loader {
@@ -62,19 +60,17 @@
 }
 
 @keyframes color {
-  100%,
   0% {
-    stroke: var(--loading-red);
+    stroke: var(--loading-primary);
+    opacity: 1;
   }
-  40% {
-    stroke: var(--loading-blue);
+  50% {
+    stroke: var(--loading-accent);
+    opacity: 0.8;
   }
-  66% {
-    stroke: var(--loading-green);
-  }
-  80%,
-  90% {
-    stroke: var(--loading-yellow);
+  100% {
+    stroke: var(--loading-primary);
+    opacity: 1;
   }
 }
 

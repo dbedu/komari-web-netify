@@ -8,15 +8,17 @@ import { Link } from "react-router-dom";
 import { usePublicInfo } from "@/contexts/PublicInfoContext";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const NavBar = () => {
   const { publicInfo } = usePublicInfo();
   const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
   
   return (
     <>
-      <nav className="nav-bar flex rounded-b-lg items-center gap-3 max-h-16 justify-end min-w-full p-2 px-4 sticky top-0 z-50 backdrop-blur-sm bg-background/90 shadow-sm">
+      <nav className="nav-bar flex rounded-b-2xl items-center gap-4 max-h-16 justify-end min-w-full p-3 px-6 sticky top-0 z-50 backdrop-blur-xl bg-background/95 shadow-lg border-b border-border/20">
         <div className="mr-auto flex items-center">
           {/* <img src="/assets/logo.png" alt="Komari Logo" className="w-10 object-cover mr-2 self-center"/> */}
           <Link to="/" className="flex items-center">
@@ -35,57 +37,67 @@ const NavBar = () => {
           </div>
         </div>
 
-        {/* Desktop menu */}
-        <div className="hidden md:flex items-center gap-2">
-          <IconButton
-            variant="soft"
-            radius="full"
-            className="transition-transform hover:scale-105"
-            onClick={() => {
-              window.open("https://github.com/komari-monitor", "_blank");
-            }}
-          >
-            <GitHubLogoIcon />
-          </IconButton>
+        {/* Desktop menu - only show on desktop */}
+        {!isMobile && (
+          <div className="flex items-center gap-3">
+            <IconButton
+              variant="soft"
+              radius="full"
+              className="transition-all duration-200 hover:scale-105 hover:shadow-md"
+              onClick={() => {
+                window.open("https://github.com/komari-monitor", "_blank");
+              }}
+            >
+              <GitHubLogoIcon />
+            </IconButton>
 
-          <ThemeSwitch />
-          <ColorSwitch />
-          <LanguageSwitch />
-          {publicInfo?.private_site ? (
-            <LoginDialog
-              autoOpen={publicInfo?.private_site}
-              info={t('common.private_site')}
-              onLoginSuccess={() => { window.location.reload(); }}
-            />
-          ) : (
-            <LoginDialog />
-          )}
-        </div>
+            <div className="flex items-center gap-2">
+              <ThemeSwitch />
+              <ColorSwitch />
+              <LanguageSwitch />
+            </div>
+            
+            {publicInfo?.private_site ? (
+              <LoginDialog
+                autoOpen={publicInfo?.private_site}
+                info={t('common.private_site')}
+                onLoginSuccess={() => { window.location.reload(); }}
+              />
+            ) : (
+              <LoginDialog />
+            )}
+          </div>
+        )}
         
-        {/* Mobile menu button */}
-        <button 
-          data-accent-color="" 
-          className="rt-reset rt-BaseButton rt-r-size-2 rt-variant-ghost rt-IconButton block md:!hidden"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <Cross1Icon /> : <HamburgerMenuIcon />}
-        </button>
+        {/* Mobile menu button - only show on mobile */}
+        {isMobile && (
+          <button 
+            data-accent-color="" 
+            className="rt-reset rt-BaseButton rt-r-size-2 rt-variant-ghost rt-IconButton transition-all duration-200 hover:scale-105 hover:shadow-md rounded-full"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <Cross1Icon /> : <HamburgerMenuIcon />}
+          </button>
+        )}
       </nav>
       
-      {/* Mobile menu dropdown */}
-      {mobileMenuOpen && (
-        <Box className="block md:!hidden fixed top-16 right-0 left-0 z-40 bg-background/95 backdrop-blur-md shadow-md p-4 border-t border-border animate-in slide-in-from-top duration-300">
-          <Flex direction="column" gap="3" align="center">
-            <Flex gap="2" className="w-full justify-center">
+      {/* Mobile menu dropdown - only show on mobile */}
+      {isMobile && mobileMenuOpen && (
+        <Box className="fixed top-16 right-0 left-0 z-40 bg-background/98 backdrop-blur-xl shadow-2xl p-6 border-t border-border/30 rounded-t-3xl animate-in slide-in-from-top duration-300">
+          <Flex direction="column" gap="4" align="center">
+            <Flex gap="3" className="w-full justify-center">
               <ThemeSwitch />
               <ColorSwitch />
               <LanguageSwitch />
             </Flex>
             
-            <Flex gap="2" className="w-full justify-center">
+            <div className="w-full h-px bg-border/20 my-1"></div>
+            
+            <Flex gap="3" className="w-full justify-center">
               <IconButton
                 variant="soft"
                 radius="full"
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
                 onClick={() => {
                   window.open("https://github.com/komari-monitor", "_blank");
                   setMobileMenuOpen(false);

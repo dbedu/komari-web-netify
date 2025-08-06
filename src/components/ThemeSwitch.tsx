@@ -15,7 +15,11 @@ interface ThemeSwitchProps {
 
 const ThemeSwitch = ({
   icon = (
-    <IconButton variant="soft">
+    <IconButton 
+      variant="soft" 
+      radius="full"
+      className="transition-all duration-200 hover:scale-105 hover:shadow-md backdrop-blur-sm"
+    >
       <SunIcon />
     </IconButton>
   ),
@@ -24,15 +28,27 @@ const ThemeSwitch = ({
   const [t] = useTranslation();
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger>{icon}</DropdownMenu.Trigger>
-      <DropdownMenu.Content>
-        <DropdownMenu.Item onSelect={() => setAppearance("light")}>
+      <DropdownMenu.Trigger asChild>{icon}</DropdownMenu.Trigger>
+      <DropdownMenu.Content 
+        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[140px]"
+        sideOffset={8}
+      >
+        <DropdownMenu.Item 
+          onSelect={() => setAppearance("light")}
+          className="rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-accent/10 hover:text-accent-foreground cursor-pointer focus:bg-accent/10 focus:text-accent-foreground outline-none"
+        >
           {t("theme.light", "Light")}
         </DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setAppearance("dark")}>
+        <DropdownMenu.Item 
+          onSelect={() => setAppearance("dark")}
+          className="rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-accent/10 hover:text-accent-foreground cursor-pointer focus:bg-accent/10 focus:text-accent-foreground outline-none"
+        >
           {t("theme.dark", "Dark")}
         </DropdownMenu.Item>
-        <DropdownMenu.Item onSelect={() => setAppearance("system")}>
+        <DropdownMenu.Item 
+          onSelect={() => setAppearance("system")}
+          className="rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-accent/10 hover:text-accent-foreground cursor-pointer focus:bg-accent/10 focus:text-accent-foreground outline-none"
+        >
           {t("theme.system", "System")}
         </DropdownMenu.Item>
       </DropdownMenu.Content>

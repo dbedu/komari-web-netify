@@ -137,37 +137,42 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
       >
         {/* Navbar */}
         <motion.nav
-          className="col-span-2"
+          className="col-span-2 backdrop-blur-xl bg-background/95 border-b border-border/20 shadow-lg"
           initial={{ y: 0 }}
           animate={{ y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <Flex
-            gap="3"
-            p="2"
+            gap="4"
+            p="3"
+            px="6"
             justify="between"
             align="center"
-            className="border-b-1"
           >
-            <Flex gap="3" align="center">
+            <Flex gap="4" align="center">
               <IconButton
                 variant="ghost"
+                radius="full"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
                 style={{
                   display: isMobile && sidebarOpen ? "none" : "flex",
-                  color: "var(--gray-11)",
                 }}
               >
                 <TablerMenu2 />
               </IconButton>
-              <a href="/" target="_blank" rel="noopener noreferrer">
-                <label className="text-xl font-bold">Komari</label>
+              <a href="/" target="_blank" rel="noopener noreferrer" className="transition-all duration-200 hover:scale-105">
+                <label className="text-2xl font-bold bg-gradient-to-r from-primary to-accent-foreground bg-clip-text text-transparent cursor-pointer">
+                  Komari
+                </label>
               </a>
-              <label className="text-sm text-muted-foreground self-end overflow-hidden">
-                {versionInfo && `${versionInfo.version} (${versionInfo.hash})`}
-              </label>
+              <div className="hidden md:block">
+                <label className="text-xs text-muted-foreground/70 font-mono px-2 py-1 bg-accent/10 rounded-lg border border-border/30">
+                  {versionInfo && `v${versionInfo.version} (${versionInfo.hash})`}
+                </label>
+              </div>
             </Flex>
-            <Flex gap="3" align="center">
+            <Flex gap="2" align="center">
               {account && !account.logged_in && (
                 <LoginDialog
                   autoOpen={true}
@@ -180,7 +185,13 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
               <ThemeSwitch />
               <ColorSwitch />
               <LanguageSwitch />
-              <IconButton variant="soft" color="orange" onClick={logout}>
+              <IconButton 
+                variant="soft" 
+                color="orange" 
+                radius="full"
+                onClick={logout}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
+              >
                 <ExitIcon />
               </IconButton>
             </Flex>
@@ -194,8 +205,8 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
             initial="closed"
             animate={sidebarOpen ? "open" : "closed"}
             exit="closed"
+            className="backdrop-blur-xl bg-background/80 border-r border-border/20 shadow-xl"
             style={{
-              backgroundColor: "var(--accent-1)",
               height: "100%",
               position: isMobile ? "absolute" : "relative",
               zIndex: isMobile ? 10 : 1,
@@ -237,7 +248,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
                       <div key={item.path}>
                         {" "}
                         <Flex
-                          className="p-2 gap-2 border-l-[4px] border-transparent cursor-pointer hover:bg-accent-3 rounded-md"
+                          className="p-3 gap-3 mx-2 cursor-pointer hover:bg-accent/10 hover:shadow-md rounded-xl transition-all duration-200 border border-transparent hover:border-accent/20 backdrop-blur-sm"
                           align="center"
                           onClick={() => {
                             //const currentlyOpen = openSubMenus[item.path];
@@ -344,19 +355,17 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
         <motion.div
           variants={contentVariants}
           animate={sidebarOpen ? "open" : "closed"}
+          className="bg-gradient-to-br from-background/50 to-accent/5"
           style={{
-            backgroundColor: "var(--accent-3)",
             display: isMobile && sidebarOpen ? "none" : "block",
             height: "100%", // Ensure the container takes full height
             overflow: "hidden", // Prevent this container from scrolling
           }}
         >
           <div
+            className="h-full bg-background/80 backdrop-blur-sm border-l border-border/10 rounded-tl-2xl shadow-inner"
             style={{
-              backgroundColor: "var(--accent-1)",
-              height: "100%",
-              borderRadius: "0",
-              padding: isMobile ? "8px" : "16px",
+              padding: isMobile ? "12px" : "24px",
               overflowY: "auto",
               boxSizing: "border-box",
             }}
@@ -416,32 +425,17 @@ const SidebarItem = ({
         onClick={onClick}
         target="_blank"
         rel="noopener noreferrer"
-        className="group overflow-hidden transition-colors duration-200 hover:bg-accent-3 rounded-md"
+        className="group block mx-2 mb-1"
       >
         <Flex
-          className="p-2 gap-2"
+          className="p-3 gap-3 rounded-xl transition-all duration-200 hover:bg-accent/10 hover:shadow-md border border-transparent hover:border-accent/20 backdrop-blur-sm"
           align="center"
-          style={{
-            borderLeft: "4px solid transparent",
-            borderRadius: "6px",
-            backgroundColor: "transparent",
-            color: "inherit",
-            transition: "background-color 0.2s, border-color 0.2s",
-          }}
         >
-          <span
-            style={{
-              color: "inherit",
-              opacity: 0.7,
-            }}
-            className="flex w-4 h-5 items-center justify-center"
-          >
+          <span className="flex w-5 h-5 items-center justify-center opacity-70 group-hover:opacity-100 transition-opacity duration-200">
             {icon}
           </span>
           <Text
-            className="text-base"
-            weight="medium"
-            style={{ flex: 1 }}
+            className="text-sm font-medium flex-1 group-hover:text-accent-foreground transition-colors duration-200"
           >
             {children}
           </Text>
@@ -454,37 +448,35 @@ const SidebarItem = ({
     <Link
       to={to}
       onClick={onClick}
-      className="group overflow-hidden transition-colors duration-200 hover:bg-accent-3 rounded-md"
+      className="group block mx-2 mb-1"
     >
       <Flex
-        className="p-2 gap-2"
+        className={`p-3 gap-3 rounded-xl transition-all duration-200 border backdrop-blur-sm ${
+          isActive 
+            ? 'bg-accent/20 border-accent/40 shadow-md text-accent-foreground' 
+            : 'border-transparent hover:bg-accent/10 hover:shadow-md hover:border-accent/20'
+        }`}
         align="center"
-        style={{
-          borderLeft: isActive
-            ? "4px solid var(--accent-8)"
-            : "4px solid transparent",
-          borderRadius: "6px",
-          backgroundColor: isActive ? "var(--accent-4)" : "transparent",
-          color: isActive ? "var(--accent-10)" : "inherit",
-          transition: "background-color 0.2s, border-color 0.2s",
-        }}
       >
-        <span
-          style={{
-            color: isActive ? "var(--accent-10)" : "inherit",
-            opacity: isActive ? 1 : 0.7,
-          }}
-          className="flex w-4 h-5 items-center justify-center"
+        <span 
+          className={`flex w-5 h-5 items-center justify-center transition-opacity duration-200 ${
+            isActive ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'
+          }`}
         >
           {icon}
         </span>
         <Text
-          className="text-base"
-          weight={isActive ? "bold" : "medium"}
-          style={{ flex: 1 }}
+          className={`text-sm flex-1 transition-colors duration-200 ${
+            isActive 
+              ? 'font-semibold text-accent-foreground' 
+              : 'font-medium group-hover:text-accent-foreground'
+          }`}
         >
           {children}
         </Text>
+        {isActive && (
+          <div className="w-2 h-2 rounded-full bg-accent-foreground/60"></div>
+        )}
       </Flex>
     </Link>
   );
