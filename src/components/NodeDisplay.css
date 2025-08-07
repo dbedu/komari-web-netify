@@ -1,40 +1,36 @@
-/* 表格滚动条美化 */
-.node-table-container {
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-  transition: scrollbar-color 0.3s ease-out;
+/* 自定义滚动条，实现自动隐藏 */
+.custom-scrollbar {
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: transparent transparent; /* For Firefox */
 }
 
-.node-table-container:hover {
-  scrollbar-color: var(--accent-7) var(--accent-3);
-}
-
-.node-table-container::-webkit-scrollbar {
-  height: 6px;
+.custom-scrollbar::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
-.node-table-container::-webkit-scrollbar-track {
+.custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent;
   border-radius: 3px;
+  transition: background-color 0.3s ease-in-out;
 }
 
-.node-table-container::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 3px;
-  transition: background-color 0.3s ease-out;
+/* 在容器hover时显示滚动条 */
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: var(--accent-7);
 }
 
-.node-table-container:hover::-webkit-scrollbar-track {
-  background: var(--accent-3);
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent-9);
 }
 
-.node-table-container:hover::-webkit-scrollbar-thumb {
-  background: var(--accent-7);
-}
-
-.node-table-container::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-9);
+/* 针对移动端触摸滚动优化，使其在滚动时显示 */
+.custom-scrollbar:not(:hover)::-webkit-scrollbar-thumb {
+  background-color: transparent;
 }
 
 /* 搜索框清除按钮的悬停效果 */

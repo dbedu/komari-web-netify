@@ -176,24 +176,26 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
       </Flex>
       {/* 分组选择器 */}
       {showGroupSelector && (
-        <Flex align="center" gap="2" className="mx-4 mb-2 -mt-2 overflow-x-auto">
+        <Flex align="center" gap="2" className="mx-4 mb-2 -mt-2">
           <label className="whitespace-nowrap text-md text-muted-foreground">
             {t("common.group", { defaultValue: "分组" })}
           </label>
-          <SegmentedControl.Root
-            value={selectedGroup}
-            onValueChange={setSelectedGroup}
-            size="1"
-          >
-            <SegmentedControl.Item value="all">
-              {t("common.all", { defaultValue: "所有" })}
-            </SegmentedControl.Item>
-            {groups.map((group) => (
-              <SegmentedControl.Item key={group} value={group}>
-                {group}
+          <div className="flex-1 overflow-x-auto custom-scrollbar">
+            <SegmentedControl.Root
+              value={selectedGroup}
+              onValueChange={setSelectedGroup}
+              size="1"
+            >
+              <SegmentedControl.Item value="all">
+                {t("common.all", { defaultValue: "所有" })}
               </SegmentedControl.Item>
-            ))}
-          </SegmentedControl.Root>
+              {groups.map((group) => (
+                <SegmentedControl.Item key={group} value={group}>
+                  {group}
+                </SegmentedControl.Item>
+              ))}
+            </SegmentedControl.Root>
+          </div>
         </Flex>
       )}
       {/* 搜索结果统计 */}
