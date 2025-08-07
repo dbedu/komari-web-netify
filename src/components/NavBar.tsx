@@ -72,51 +72,50 @@ const NavBar = () => {
           </div>
         )}
 
-        {/* Mobile menu button - only show on mobile */}
-        {isMobile && (
-          <Drawer>
-            <DrawerTrigger asChild>
-              <IconButton variant="ghost">
-                <HamburgerMenuIcon />
-              </IconButton>
-            </DrawerTrigger>
-            <DrawerContent className="p-6">
-              <Flex direction="column" gap="4" align="center">
-                <Flex gap="3" className="w-full justify-center">
-                  <ThemeSwitch />
-                  <ColorSwitch />
-                  <LanguageSwitch />
-                </Flex>
-
-                <div className="w-full h-px bg-border/20 my-1"></div>
-
-                <Flex gap="3" className="w-full justify-center">
-                  <IconButton
-                    variant="soft"
-                    radius="full"
-                    className="transition-all duration-200 hover:scale-105 hover:shadow-md"
-                    onClick={() => {
-                      window.open("https://github.com/komari-monitor", "_blank");
-                    }}
-                  >
-                    <GitHubLogoIcon />
-                  </IconButton>
-
-                  {publicInfo?.private_site ? (
-                    <LoginDialog
-                      autoOpen={publicInfo?.private_site}
-                      info={t('common.private_site')}
-                      onLoginSuccess={() => { window.location.reload(); }}
-                    />
-                  ) : (
-                    <LoginDialog />
-                  )}
-                </Flex>
-              </Flex>
-            </DrawerContent>
-          </Drawer>
-        )}
+        {/* Mobile menu button is now a FAB */}
       </nav>
+
+      {/* Mobile Floating Action Button and Drawer */}
+      {isMobile && (
+        <Drawer>
+          <DrawerTrigger asChild>
+            <IconButton
+              size="3"
+              className="fixed bottom-6 right-6 z-50 rounded-full shadow-lg"
+            >
+              <HamburgerMenuIcon width="24" height="24" />
+            </IconButton>
+          </DrawerTrigger>
+          <DrawerContent className="p-6">
+            <Flex gap="4" align="center" justify="center" className="w-full">
+              <ThemeSwitch />
+              <ColorSwitch />
+              <LanguageSwitch />
+              <Separator orientation="vertical" size="2" className="h-6" />
+              <IconButton
+                variant="soft"
+                radius="full"
+                onClick={() => {
+                  window.open("https://github.com/komari-monitor", "_blank");
+                }}
+              >
+                <GitHubLogoIcon />
+              </IconButton>
+              {publicInfo?.private_site ? (
+                <LoginDialog
+                  autoOpen={publicInfo?.private_site}
+                  info={t('common.private_site')}
+                  onLoginSuccess={() => {
+                    window.location.reload();
+                  }}
+                />
+              ) : (
+                <LoginDialog />
+              )}
+            </Flex>
+          </DrawerContent>
+        </Drawer>
+      )}
     </>
   );
 };
