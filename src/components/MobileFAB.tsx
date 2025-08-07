@@ -26,7 +26,7 @@ const MobileFAB = () => {
   }
 
   return (
-    <Drawer modal={false}>
+    <Drawer>
       <DrawerTrigger asChild>
         <IconButton
           size="3"
