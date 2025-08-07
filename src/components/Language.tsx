@@ -14,8 +14,8 @@ const languages: { code: string; name: string }[] = [
 
 const LanguageSwitch = ({
   icon = (
-    <IconButton 
-      variant="soft" 
+    <IconButton
+      variant="soft"
       radius="full"
       className="transition-all duration-200 hover:scale-105 hover:shadow-md backdrop-blur-sm"
     >
@@ -34,8 +34,8 @@ const LanguageSwitch = ({
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>{icon}</DropdownMenu.Trigger>
-      <DropdownMenu.Content 
-        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[160px]"
+      <DropdownMenu.Content
+        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[160px] z-"
         sideOffset={8}
       >
         {languages.map((lang) => (

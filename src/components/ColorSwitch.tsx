@@ -8,10 +8,10 @@ interface ColorSwitchProps {
   icon?: ReactNode;
 }
 
-const ColorSwitch = ({ 
+const ColorSwitch = ({
   icon = (
-    <IconButton 
-      variant="soft" 
+    <IconButton
+      variant="soft"
       radius="full"
       className="transition-all duration-200 hover:scale-105 hover:shadow-md backdrop-blur-sm"
     >
@@ -33,17 +33,17 @@ const ColorSwitch = ({
       <DropdownMenu.Trigger>
           {icon}
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content 
-        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[160px] max-h-[320px] overflow-y-auto"
+      <DropdownMenu.Content
+        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[160px] max-h-[320px] overflow-y-auto z-"
         sideOffset={8}
       >
         {colorItems.map((color) => (
-          <DropdownMenu.Item 
+          <DropdownMenu.Item
             key={color}
             onSelect={() => setColor(color)}
             className="rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-accent/10 hover:text-accent-foreground cursor-pointer focus:bg-accent/10 focus:text-accent-foreground outline-none flex items-center gap-2"
           >
-            <div 
+            <div
               className={`w-3 h-3 rounded-full border border-border/30 flex-shrink-0`}
               style={{ backgroundColor: `var(--${color}-9)` }}
             />

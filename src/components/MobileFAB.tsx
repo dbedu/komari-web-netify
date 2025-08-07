@@ -38,7 +38,7 @@ const MobileFAB = () => {
           <HamburgerMenuIcon width="24" height="24" />
         </IconButton>
       </DrawerTrigger>
-      <DrawerContent className="p-6">
+      <DrawerContent className="p-6 max-h-[15vh]">
         <Flex gap="4" align="center" justify="center" className="w-full">
           <ThemeSwitch />
           <ColorSwitch />
