@@ -27,7 +27,13 @@ const MobileFAB = () => {
       <DrawerTrigger asChild>
         <IconButton
           size="3"
-          className="fixed bottom-6 right-6 z-50 rounded-full shadow-lg"
+          className="rounded-full shadow-lg"
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            zIndex: 1000,
+          }}
         >
           <HamburgerMenuIcon width="24" height="24" />
         </IconButton>
