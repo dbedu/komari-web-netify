@@ -2,20 +2,23 @@ import ThemeSwitch from "./ThemeSwitch";
 import ColorSwitch from "./ColorSwitch";
 import LanguageSwitch from "./Language";
 import LoginDialog from "./Login";
-import { IconButton, Flex, Box, Separator } from "@radix-ui/themes";
-import { GitHubLogoIcon, HamburgerMenuIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { IconButton, Flex, Separator } from "@radix-ui/themes";
+import { GitHubLogoIcon, HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { Link } from "react-router-dom";
 import { usePublicInfo } from "@/contexts/PublicInfoContext";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
 const NavBar = () => {
   const { publicInfo } = usePublicInfo();
   const { t } = useTranslation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
-  
+
   return (
     <>
       <nav className="nav-bar flex rounded-b-2xl items-center gap-4 max-h-16 justify-end min-w-full p-3 px-6 sticky top-0 z-50 backdrop-blur-xl bg-background/95 shadow-lg border-b border-border/20">
@@ -56,7 +59,7 @@ const NavBar = () => {
               <ColorSwitch />
               <LanguageSwitch />
             </div>
-            
+
             {publicInfo?.private_site ? (
               <LoginDialog
                 autoOpen={publicInfo?.private_site}
@@ -68,57 +71,52 @@ const NavBar = () => {
             )}
           </div>
         )}
-        
+
         {/* Mobile menu button - only show on mobile */}
         {isMobile && (
-          <button 
-            data-accent-color="" 
-            className="rt-reset rt-BaseButton rt-r-size-2 rt-variant-ghost rt-IconButton transition-all duration-200 hover:scale-105 hover:shadow-md rounded-full"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <Cross1Icon /> : <HamburgerMenuIcon />}
-          </button>
+          <Drawer>
+            <DrawerTrigger asChild>
+              <IconButton variant="ghost">
+                <HamburgerMenuIcon />
+              </IconButton>
+            </DrawerTrigger>
+            <DrawerContent className="p-6">
+              <Flex direction="column" gap="4" align="center">
+                <Flex gap="3" className="w-full justify-center">
+                  <ThemeSwitch />
+                  <ColorSwitch />
+                  <LanguageSwitch />
+                </Flex>
+
+                <div className="w-full h-px bg-border/20 my-1"></div>
+
+                <Flex gap="3" className="w-full justify-center">
+                  <IconButton
+                    variant="soft"
+                    radius="full"
+                    className="transition-all duration-200 hover:scale-105 hover:shadow-md"
+                    onClick={() => {
+                      window.open("https://github.com/komari-monitor", "_blank");
+                    }}
+                  >
+                    <GitHubLogoIcon />
+                  </IconButton>
+
+                  {publicInfo?.private_site ? (
+                    <LoginDialog
+                      autoOpen={publicInfo?.private_site}
+                      info={t('common.private_site')}
+                      onLoginSuccess={() => { window.location.reload(); }}
+                    />
+                  ) : (
+                    <LoginDialog />
+                  )}
+                </Flex>
+              </Flex>
+            </DrawerContent>
+          </Drawer>
         )}
       </nav>
-      
-      {/* Mobile menu dropdown - only show on mobile */}
-      {isMobile && mobileMenuOpen && (
-        <Box className="fixed top-16 right-0 left-0 z-40 bg-background/98 backdrop-blur-xl shadow-2xl p-6 border-t border-border/30 rounded-t-3xl animate-in slide-in-from-top duration-300">
-          <Flex direction="column" gap="4" align="center">
-            <Flex gap="3" className="w-full justify-center">
-              <ThemeSwitch />
-              <ColorSwitch />
-              <LanguageSwitch />
-            </Flex>
-            
-            <div className="w-full h-px bg-border/20 my-1"></div>
-            
-            <Flex gap="3" className="w-full justify-center">
-              <IconButton
-                variant="soft"
-                radius="full"
-                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
-                onClick={() => {
-                  window.open("https://github.com/komari-monitor", "_blank");
-                  setMobileMenuOpen(false);
-                }}
-              >
-                <GitHubLogoIcon />
-              </IconButton>
-              
-              {publicInfo?.private_site ? (
-                <LoginDialog
-                  autoOpen={publicInfo?.private_site}
-                  info={t('common.private_site')}
-                  onLoginSuccess={() => { window.location.reload(); }}
-                />
-              ) : (
-                <LoginDialog />
-              )}
-            </Flex>
-          </Flex>
-        </Box>
-      )}
     </>
   );
 };

@@ -67,3 +67,6 @@ coverage/
 *.sln
 *.sw?
 vite.config.dev.ts
+.roo/mcp.json
+.gitignore
+.roomodes
