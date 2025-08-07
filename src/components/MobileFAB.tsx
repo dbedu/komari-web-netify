@@ -12,11 +12,14 @@ import ColorSwitch from "./ColorSwitch";
 import LanguageSwitch from "./Language";
 import LoginDialog from "./Login";
 import { useTranslation } from "react-i18next";
+import { DrawerMenuContext } from "@/contexts/DrawerMenuContext";
+import { useState } from "react";
 
 const MobileFAB = () => {
   const isMobile = useIsMobile();
   const { publicInfo } = usePublicInfo();
   const { t } = useTranslation();
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   if (!isMobile) {
     return null;
@@ -39,12 +42,13 @@ const MobileFAB = () => {
         </IconButton>
       </DrawerTrigger>
       <DrawerContent className="p-6">
-        <Flex gap="4" align="center" justify="center" className="w-full">
-          <ThemeSwitch />
-          <ColorSwitch />
-          <LanguageSwitch />
-          <Separator orientation="vertical" size="2" className="h-6" />
-          <IconButton
+        <DrawerMenuContext.Provider value={{ openMenu, setOpenMenu }}>
+          <Flex gap="4" align="center" justify="center" className="w-full">
+            <ThemeSwitch />
+            <ColorSwitch />
+            <LanguageSwitch />
+            <Separator orientation="vertical" size="2" className="h-6" />
+            <IconButton
             variant="soft"
             radius="full"
             onClick={() => {
@@ -64,7 +68,8 @@ const MobileFAB = () => {
           ) : (
             <LoginDialog />
           )}
-        </Flex>
+          </Flex>
+        </DrawerMenuContext.Provider>
       </DrawerContent>
     </Drawer>
   );

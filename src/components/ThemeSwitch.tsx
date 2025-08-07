@@ -37,7 +37,6 @@ const ThemeSwitch = ({
       onOpenChange={(isOpen) => {
         setOpenMenu(isOpen ? menuName : null);
       }}
-      modal={true}
     >
       <DropdownMenu.Trigger>{icon}</DropdownMenu.Trigger>
       <DropdownMenu.Content
