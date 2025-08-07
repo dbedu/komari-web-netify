@@ -1,6 +1,7 @@
 import { LiveDataProvider } from "@/contexts/LiveDataContext";
 import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
+import MobileFAB from "@/components/MobileFAB";
 import { Outlet } from "react-router-dom";
 import { NodeListProvider } from "@/contexts/NodeListContext";
 
@@ -15,6 +16,7 @@ const IndexLayout = () => {
             <Outlet />
           </main>
           <Footer />
+          <MobileFAB />
         </div>
       </>
     );
