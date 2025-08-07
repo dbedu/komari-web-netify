@@ -20,13 +20,14 @@ const MobileFAB = () => {
   const { publicInfo } = usePublicInfo();
   const { t } = useTranslation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   if (!isMobile) {
     return null;
   }
 
   return (
-    <Drawer>
+    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <DrawerTrigger asChild>
         <IconButton
           size="3"
