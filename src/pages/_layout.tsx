@@ -16,8 +16,8 @@ const IndexLayout = () => {
             <Outlet />
           </main>
           <Footer />
-          <MobileFAB />
         </div>
+        <MobileFAB />
       </>
     );
   };
