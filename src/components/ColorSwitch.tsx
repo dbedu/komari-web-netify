@@ -29,13 +29,13 @@ const ColorSwitch = ({
   ] as const;
 
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root modal={true}>
       <DropdownMenu.Trigger>
           {icon}
       </DropdownMenu.Trigger>
       <DropdownMenu.Content
-        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[160px] max-h-[320px] overflow-y-auto z-"
-        sideOffset={8}
+        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[160px] max-h-[320px] overflow-y-auto z-[51]"
+        sideOffset={4}
       >
         {colorItems.map((color) => (
           <DropdownMenu.Item

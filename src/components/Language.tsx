@@ -32,11 +32,11 @@ const LanguageSwitch = ({
 }: LanguageSwitch = {}) => {
   const { i18n } = useTranslation();
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root modal={true}>
       <DropdownMenu.Trigger>{icon}</DropdownMenu.Trigger>
       <DropdownMenu.Content
-        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[160px] z-"
-        sideOffset={8}
+        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[160px] z-[51]"
+        sideOffset={4}
       >
         {languages.map((lang) => (
           <DropdownMenu.Item

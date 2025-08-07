@@ -27,11 +27,11 @@ const ThemeSwitch = ({
   const { setAppearance } = useContext(ThemeContext);
   const [t] = useTranslation();
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root modal={true}>
       <DropdownMenu.Trigger>{icon}</DropdownMenu.Trigger>
       <DropdownMenu.Content
-        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[140px] z-"
-        sideOffset={8}
+        className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[140px] z-[51]"
+        sideOffset={4}
       >
         <DropdownMenu.Item
           onSelect={() => setAppearance("light")}
