@@ -1,6 +1,7 @@
 import { DropdownMenu, IconButton } from "@radix-ui/themes";
 import { useContext, type ReactNode } from "react";
 import { ThemeContext } from "../contexts/ThemeContext";
+import { DrawerMenuContext } from "../contexts/DrawerMenuContext";
 import { SunIcon } from "@radix-ui/react-icons";
 import { useTranslation } from "react-i18next";
 
@@ -26,8 +27,18 @@ const ThemeSwitch = ({
 }: ThemeSwitchProps = {}) => {
   const { setAppearance } = useContext(ThemeContext);
   const [t] = useTranslation();
+  const { openMenu, setOpenMenu } = useContext(DrawerMenuContext);
+
+  const menuName = "theme";
+
   return (
-    <DropdownMenu.Root modal={true}>
+    <DropdownMenu.Root
+      open={openMenu === menuName}
+      onOpenChange={(isOpen) => {
+        setOpenMenu(isOpen ? menuName : null);
+      }}
+      modal={true}
+    >
       <DropdownMenu.Trigger>{icon}</DropdownMenu.Trigger>
       <DropdownMenu.Content
         className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[140px] z-[51]"

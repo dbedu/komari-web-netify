@@ -8,10 +8,13 @@ import { Link } from "react-router-dom";
 import { usePublicInfo } from "@/contexts/PublicInfoContext";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { DrawerMenuContext } from "@/contexts/DrawerMenuContext";
+import { useState } from "react";
 const NavBar = () => {
   const { publicInfo } = usePublicInfo();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   return (
     <>
@@ -48,11 +51,13 @@ const NavBar = () => {
               <GitHubLogoIcon />
             </IconButton>
 
-            <div className="flex items-center gap-2">
-              <ThemeSwitch />
-              <ColorSwitch />
-              <LanguageSwitch />
-            </div>
+            <DrawerMenuContext.Provider value={{ openMenu, setOpenMenu }}>
+              <div className="flex items-center gap-2">
+                <ThemeSwitch />
+                <ColorSwitch />
+                <LanguageSwitch />
+              </div>
+            </DrawerMenuContext.Provider>
 
             {publicInfo?.private_site ? (
               <LoginDialog

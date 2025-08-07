@@ -1,6 +1,7 @@
 import { DropdownMenu, IconButton, Text } from "@radix-ui/themes";
 import { useContext, type ReactNode } from "react";
 import { ThemeContext } from "../contexts/ThemeContext";
+import { DrawerMenuContext } from "../contexts/DrawerMenuContext";
 import { BlendingModeIcon } from "@radix-ui/react-icons";
 import { useTranslation } from "react-i18next";
 
@@ -21,6 +22,9 @@ const ColorSwitch = ({
 }: ColorSwitchProps = {}) => {
   const { setColor } = useContext(ThemeContext);
   const { t } = useTranslation();
+  const { openMenu, setOpenMenu } = useContext(DrawerMenuContext);
+
+  const menuName = "color";
 
   const colorItems = [
     "gray", "gold", "bronze", "brown", "yellow", "amber", "orange", "tomato",
@@ -29,7 +33,13 @@ const ColorSwitch = ({
   ] as const;
 
   return (
-    <DropdownMenu.Root modal={true}>
+    <DropdownMenu.Root
+      open={openMenu === menuName}
+      onOpenChange={(isOpen) => {
+        setOpenMenu(isOpen ? menuName : null);
+      }}
+      modal={true}
+    >
       <DropdownMenu.Trigger>
           {icon}
       </DropdownMenu.Trigger>

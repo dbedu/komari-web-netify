@@ -1,6 +1,7 @@
 import { DropdownMenu, IconButton } from "@radix-ui/themes";
-import { type ReactNode } from "react";
+import { useContext, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { DrawerMenuContext } from "../contexts/DrawerMenuContext";
 
 interface LanguageSwitch {
   icon?: ReactNode;
@@ -31,8 +32,18 @@ const LanguageSwitch = ({
   ),
 }: LanguageSwitch = {}) => {
   const { i18n } = useTranslation();
+  const { openMenu, setOpenMenu } = useContext(DrawerMenuContext);
+
+  const menuName = "language";
+
   return (
-    <DropdownMenu.Root modal={true}>
+    <DropdownMenu.Root
+      open={openMenu === menuName}
+      onOpenChange={(isOpen) => {
+        setOpenMenu(isOpen ? menuName : null);
+      }}
+      modal={true}
+    >
       <DropdownMenu.Trigger>{icon}</DropdownMenu.Trigger>
       <DropdownMenu.Content
         className="backdrop-blur-xl bg-background/95 border border-border/20 shadow-2xl rounded-2xl p-2 min-w-[160px] z-[51]"
