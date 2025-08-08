@@ -196,12 +196,15 @@ const PingChart = ({ uuid }: { uuid: string }) => {
 
   // ApexCharts series
   const series = useMemo(() => {
+    const data = remoteData || [];
     return tasks.map((task, idx) => ({
       name: task.name,
-      data: chartData.map((d: any) => ({ x: new Date(d.time).getTime(), y: d[task.id] ?? null })),
       color: colors[idx % colors.length],
+      data: data
+        .filter((r) => r.task_id === task.id)
+        .map((r) => ({ x: new Date(r.time).getTime(), y: r.value })),
     }));
-  }, [tasks, chartData]);
+  }, [tasks, remoteData]);
 
 
 
@@ -245,11 +248,16 @@ const PingChart = ({ uuid }: { uuid: string }) => {
       curve: cutPeak ? 'smooth' : 'straight',
       width: 2.5,
       lineCap: 'round',
+      colors: colors,
+      opacity: 1,
+      dashArray: 0,
     },
     markers: {
       size: 0,
       hover: { size: 5 },
       strokeWidth: 0,
+      colors: colors,
+      strokeColors: 'transparent',
     },
     grid: {
       borderColor: theme === 'dark' ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.06)',
