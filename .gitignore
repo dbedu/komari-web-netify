@@ -70,3 +70,5 @@ vite.config.dev.ts
 .roo/mcp.json
 .gitignore
 .roomodes
+.augment-guidelines
+Komari_Monitor_Analysis.md
