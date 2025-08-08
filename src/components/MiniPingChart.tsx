@@ -1,16 +1,13 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, Switch } from "@radix-ui/themes";
 import Loading from "@/components/loading";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  ChartLegend,
-} from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
+import { ChartContainer } from "@/components/ui/chart";
+import ReactApexChart from "react-apexcharts";
+import type { ApexOptions } from "apexcharts";
 import { useTranslation } from "react-i18next";
 import fillMissingTimePoints, { cutPeakValues } from "@/utils/RecordHelper";
 import Tips from "./ui/tips";
+import { useTheme } from "next-themes";
 
 interface PingRecord {
   client: string;
@@ -62,7 +59,7 @@ const MiniPingChart = ({
   const [tasks, setTasks] = useState<TaskInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [hiddenLines, setHiddenLines] = useState<Record<string, boolean>>({});
+
   const [t] = useTranslation();
   const [cutPeak, setCutPeak] = useState(false);
   useEffect(() => {
@@ -129,27 +126,7 @@ const MiniPingChart = ({
     return full1;
   }, [remoteData, cutPeak, tasks]);
 
-  const timeFormatter = (value: any, index: number) => {
-    if (!chartData.length) return "";
-    if (index === 0 || index === chartData.length - 1) {
-      return new Date(value).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    }
-    return "";
-  };
 
-  const lableFormatter = (value: any) => {
-    const date = new Date(value);
-    return date.toLocaleString([], {
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  };
 
   const chartConfig = useMemo(() => {
     const config: Record<string, any> = {};
@@ -162,10 +139,60 @@ const MiniPingChart = ({
     return config;
   }, [tasks]);
 
-  const handleLegendClick = useCallback((e: any) => {
-    const key = e.dataKey;
-    setHiddenLines((prev) => ({ ...prev, [key]: !prev[key] }));
-  }, []);
+  // ApexCharts series
+  const series = useMemo(() => {
+    return tasks.map((task, idx) => ({
+      name: task.name,
+      data: chartData.map((d: any) => ({ x: new Date(d.time).getTime(), y: d[task.id] ?? null })),
+      color: colors[idx % colors.length],
+    }));
+  }, [tasks, chartData]);
+
+  const { theme } = useTheme();
+
+  const options: ApexOptions = useMemo(() => ({
+    chart: {
+      type: "line",
+      toolbar: { show: false },
+      animations: { enabled: false },
+      stacked: false,
+      zoom: { enabled: false },
+      foreColor: undefined,
+    },
+    theme: {
+      mode: theme === "dark" ? "dark" : "light",
+    },
+    stroke: { curve: cutPeak ? "smooth" : "straight", width: 2 },
+    markers: { size: 0 },
+    dataLabels: { enabled: false },
+    grid: { xaxis: { lines: { show: false } }, yaxis: { lines: { show: true } } },
+    xaxis: {
+      type: "datetime",
+      labels: {
+        formatter: (val: string, timestamp?: number) => {
+          const ts = timestamp ?? Number(val);
+          const date = new Date(ts);
+          return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        },
+      },
+      tooltip: { enabled: false },
+    },
+    yaxis: {
+      labels: { formatter: (v: number) => `${Math.round(Number(v))} ms` },
+    },
+    tooltip: {
+      shared: true,
+      x: {
+        formatter: (val: number) => {
+          const date = new Date(val);
+          return date.toLocaleString([], { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        },
+      },
+      y: { formatter: (v?: number) => (v == null ? "-" : `${Math.round(Number(v))} ms`) },
+    },
+    legend: { show: true },
+    noData: { text: t("common.none") },
+  }), [cutPeak, t, theme]);
 
   return (
     <Card style={{ width, height }} className="flex flex-col">
@@ -206,56 +233,13 @@ const MiniPingChart = ({
         !loading &&
         !error && (
           <ChartContainer config={chartConfig} className="w-full h-full">
-            <LineChart
-              data={chartData}
-              accessibilityLayer
-              margin={{ top: 10, right: 16, bottom: 10, left: 16 }}
-            >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="time"
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={timeFormatter}
-                interval="preserveStartEnd" // Preserve start and end ticks
-                minTickGap={30} // Minimum gap between ticks to prevent overlap
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                unit="ms"
-                allowDecimals={false}
-                orientation="left"
-                type="number"
-                tick={{ dx: -10 }}
-                mirror={true}
-              />
-              <ChartTooltip
-                cursor={false}
-                formatter={(v: any) => `${Math.round(v)} ms`}
-                content={
-                  <ChartTooltipContent
-                    labelFormatter={lableFormatter}
-                    indicator="dot"
-                  />
-                }
-              />
-              <ChartLegend onClick={handleLegendClick} />
-              {tasks.map((task, idx) => (
-                <Line
-                  key={task.id}
-                  dataKey={String(task.id)}
-                  name={task.name}
-                  stroke={colors[idx % colors.length]}
-                  dot={false}
-                  isAnimationActive={false}
-                  strokeWidth={2}
-                  connectNulls={false}
-                  type={cutPeak ? "basisOpen" : "linear"}
-                  hide={!!hiddenLines[task.id]}
-                />
-              ))}
-            </LineChart>
+            <ReactApexChart
+              options={options}
+              series={series}
+              type="line"
+              height="100%"
+              width="100%"
+            />
           </ChartContainer>
         )
       )}

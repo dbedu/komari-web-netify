@@ -1,4 +1,4 @@
-import { StrictMode, useMemo } from "react";
+import { StrictMode, useMemo, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import "./global.css";
 import { Theme } from "@radix-ui/themes";
@@ -12,6 +12,7 @@ import {
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useSystemTheme } from "./hooks/useSystemTheme";
 import { BrowserRouter } from "react-router-dom";
+import { ThemeProvider as NextThemesProvider, useTheme as useNextTheme } from "next-themes";
 import "./i18n/config"; // Import i18next config
 import ErrorBoundary from "./components/ErrorBoundary";
 import { Suspense } from "react";
@@ -46,6 +47,12 @@ const App = () => {
     [appearance, setAppearance, color, setColor]
   );
   const routing = useRoutes(routes);
+
+  // Bridge to next-themes: keep HTML .dark class in sync for Tailwind/Shadcn
+  const { setTheme } = useNextTheme();
+  useEffect(() => {
+    setTheme(appearance === "system" ? "system" : appearance);
+  }, [appearance, setTheme]);
   return (
     <Suspense fallback={<Loading />}>
       <ThemeContext.Provider value={themeContextValue}>
@@ -75,9 +82,16 @@ const App = () => {
 createRoot(document.getElementById("root")!).render(
   <ErrorBoundary>
     <StrictMode>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <NextThemesProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </NextThemesProvider>
     </StrictMode>
   </ErrorBoundary>
 );

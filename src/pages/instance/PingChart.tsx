@@ -3,13 +3,12 @@ import { useTranslation } from "react-i18next";
 import { Flex, SegmentedControl, Card, Switch, Button } from "@radix-ui/themes";
 import { usePublicInfo } from "@/contexts/PublicInfoContext";
 import Loading from "@/components/loading";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  ChartLegend,
-} from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
+import { ChartContainer } from "@/components/ui/chart";
+import ReactApexChart from "react-apexcharts";
+import type { ApexOptions } from "apexcharts";
+import ApexCharts from "apexcharts";
+import { useTheme } from "next-themes";
+
 import fillMissingTimePoints, {
   cutPeakValues,
   calculateLossRate,
@@ -49,6 +48,8 @@ const colors = [
   "#FF8A65",
   "#FFD600",
 ];
+  const chartId = "pingchart";
+
 
 const PingChart = ({ uuid }: { uuid: string }) => {
   const { t } = useTranslation();
@@ -185,7 +186,6 @@ const PingChart = ({ uuid }: { uuid: string }) => {
   // 组装图表数据
   const chartData = useMemo(() => {
     let full = midData;
-    // 如果开启削峰，应用削峰处理
     if (cutPeak && tasks.length > 0) {
       const taskKeys = tasks.map((task) => String(task.id));
       full = cutPeakValues(midData, taskKeys);
@@ -193,41 +193,16 @@ const PingChart = ({ uuid }: { uuid: string }) => {
     return full;
   }, [remoteData, cutPeak, tasks, hours]);
 
-  // 时间格式化
-  const timeFormatter = (value: any, index: number) => {
-    if (!chartData.length) return "";
-    if (index === 0 || index === chartData.length - 1) {
-      if (hours < 24) {
-        // Use hours for conditional formatting
-        return new Date(value).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-      }
-      return new Date(value).toLocaleDateString([], {
-        month: "2-digit",
-        day: "2-digit",
-      });
-    }
-    return "";
-  };
-  const lableFormatter = (value: any) => {
-    const date = new Date(value);
-    if (hours < 24) {
-      // Use hours for conditional formatting
-      return date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
-    }
-    return date.toLocaleString([], {
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  // ApexCharts series
+  const series = useMemo(() => {
+    return tasks.map((task, idx) => ({
+      name: task.name,
+      data: chartData.map((d: any) => ({ x: new Date(d.time).getTime(), y: d[task.id] ?? null })),
+      color: colors[idx % colors.length],
+    }));
+  }, [tasks, chartData]);
+
+
 
   // 颜色配置
   const chartConfig = useMemo(() => {
@@ -240,6 +215,59 @@ const PingChart = ({ uuid }: { uuid: string }) => {
     });
     return config;
   }, [tasks]);
+
+  const { theme } = useTheme();
+
+  const options: ApexOptions = useMemo(() => ({
+    chart: {
+      id: chartId,
+
+    legend: {
+      show: true,
+      onItemClick: { toggleDataSeries: true },
+    },
+
+      type: "line",
+      toolbar: { show: false },
+      animations: { enabled: false },
+      stacked: false,
+      zoom: { enabled: false },
+    },
+    theme: { mode: theme === "dark" ? "dark" : "light" },
+    stroke: { curve: cutPeak ? "smooth" : "straight", width: 2 },
+    markers: { size: 0 },
+    dataLabels: { enabled: false },
+    grid: { xaxis: { lines: { show: false } }, yaxis: { lines: { show: true } } },
+    xaxis: {
+      type: "datetime",
+      labels: {
+        formatter: (val: string, timestamp?: number) => {
+          const ts = timestamp ?? Number(val);
+          const date = new Date(ts);
+          if (hours < 24) {
+            return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+          }
+          return date.toLocaleDateString([], { month: "2-digit", day: "2-digit" });
+        },
+      },
+    },
+    yaxis: { labels: { formatter: (v: number) => `${Math.round(Number(v))} ms` } },
+    tooltip: {
+      shared: true,
+      x: {
+        formatter: (val: number) => {
+          const date = new Date(val);
+          if (hours < 24) {
+            return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+          }
+          return date.toLocaleString([], { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+        },
+      },
+      y: { formatter: (v?: number) => (v == null ? "-" : `${Math.round(Number(v))} ms`) },
+    },
+    legend: { show: true },
+    noData: { text: t("common.none") },
+  }), [theme, cutPeak, hours, t]);
 
   const latestValues = useMemo(() => {
     if (!remoteData || !tasks.length) return [];
@@ -258,20 +286,24 @@ const PingChart = ({ uuid }: { uuid: string }) => {
     }));
   }, [remoteData, tasks]);
 
-  const [hiddenLines, setHiddenLines] = useState<Record<string, boolean>>({});
-  const handleLegendClick = useCallback((e: any) => {
-    const key = e.dataKey;
-    setHiddenLines((prev) => ({ ...prev, [key]: !prev[key] }));
-  }, []);
+  const [allHidden, setAllHidden] = useState(false);
 
   const toggleAllLines = useCallback(() => {
-    const allHidden = tasks.every((task) => hiddenLines[String(task.id)]);
-    const newHiddenState: Record<string, boolean> = {};
-    tasks.forEach((task) => {
-      newHiddenState[String(task.id)] = !allHidden;
-    });
-    setHiddenLines(newHiddenState);
-  }, [tasks, hiddenLines]);
+    if (!tasks.length) return;
+    if (allHidden) {
+      tasks.forEach((task) => ApexCharts.exec(chartId, 'showSeries', task.name));
+      setAllHidden(false);
+    } else {
+      tasks.forEach((task) => ApexCharts.exec(chartId, 'hideSeries', task.name));
+      setAllHidden(true);
+    }
+  }, [allHidden, tasks]);
+
+  useEffect(() => {
+    // 当任务或时间范围变化时，默认显示所有序列
+    tasks.forEach((task) => ApexCharts.exec(chartId, 'showSeries', task.name));
+    setAllHidden(false);
+  }, [tasks, hours]);
 
   return (
     <Flex direction="column" align="center" gap="4" className="w-full max-w-screen">
@@ -356,54 +388,13 @@ const PingChart = ({ uuid }: { uuid: string }) => {
           </div>
         ) : (
           <ChartContainer config={chartConfig}>
-            <LineChart
-              data={chartData}
-              accessibilityLayer
-              margin={{ top: 0, right: 16, bottom: 0, left: 16 }}
-            >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="time"
-                tickLine={false}
-                tickFormatter={timeFormatter}
-                interval={0}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                unit="ms"
-                allowDecimals={false}
-                orientation="left"
-                type="number"
-                tick={{ dx: -10 }}
-                mirror={true}
-              />
-              <ChartTooltip
-                cursor={false}
-                formatter={(v: any) => `${Math.round(v)} ms`}
-                content={
-                  <ChartTooltipContent
-                    labelFormatter={lableFormatter}
-                    indicator="dot"
-                  />
-                }
-              />
-              <ChartLegend onClick={handleLegendClick} />
-              {tasks.map((task, idx) => (
-                <Line
-                  key={task.id}
-                  dataKey={String(task.id)}
-                  name={task.name}
-                  stroke={colors[idx % colors.length]}
-                  dot={false}
-                  isAnimationActive={false}
-                  strokeWidth={2}
-                  connectNulls={false}
-                  type={cutPeak ? "basis" : "linear"}
-                  hide={!!hiddenLines[String(task.id)]}
-                />
-              ))}
-            </LineChart>
+            <ReactApexChart
+              options={options}
+              series={series}
+              type="line"
+              height={360}
+              width="100%"
+            />
           </ChartContainer>
         )}
         {/* Cut Peak 开关和显示/隐藏所有按钮 */}
@@ -428,7 +419,7 @@ const PingChart = ({ uuid }: { uuid: string }) => {
             onClick={toggleAllLines}
             className="flex items-center gap-2"
           >
-            {tasks.every((task) => hiddenLines[String(task.id)]) ? (
+            {allHidden ? (
               <>
                 <Eye size={16} />
                 {t("chart.showAll")}
