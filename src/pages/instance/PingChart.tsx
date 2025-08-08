@@ -219,37 +219,31 @@ const PingChart = ({ uuid }: { uuid: string }) => {
 
   const { theme } = useTheme();
 
+
   const options: ApexOptions = useMemo(() => ({
     chart: {
       id: chartId,
-
-    legend: {
-      show: true,
-      onItemClick: { toggleDataSeries: true },
-    },
 
       type: "line",
       toolbar: { show: false },
       animations: { enabled: false },
       stacked: false,
       zoom: { enabled: false },
-    },
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shade: theme === 'dark' ? 'dark' : 'light',
-        type: 'vertical',
-        shadeIntensity: 0.2,
-        opacityFrom: 0.25,
-        opacityTo: 0.0,
-        stops: [0, 90, 100],
+      dropShadow: {
+        enabled: true,
+        top: 0,
+        left: 0,
+        blur: 2,
+        color: theme === "dark" ? "#000" : "#000",
+        opacity: theme === "dark" ? 0.35 : 0.08,
       },
     },
+    fill: { type: 'solid', opacity: 0 },
 
     theme: { mode: theme === "dark" ? "dark" : "light" },
     stroke: {
       curve: cutPeak ? 'smooth' : 'straight',
-      width: 2,
+      width: 2.5,
       lineCap: 'round',
     },
     markers: {
@@ -294,6 +288,7 @@ const PingChart = ({ uuid }: { uuid: string }) => {
     },
     legend: { show: true },
     noData: { text: t("common.none") },
+    colors: colors,
   }), [theme, cutPeak, hours, t]);
 
   const latestValues = useMemo(() => {
