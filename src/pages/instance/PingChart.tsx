@@ -38,15 +38,16 @@ interface PingApiResp {
 }
 
 //const MAX_POINTS = 1000;
+
 const colors = [
-  "#F38181",
-  "#347433",
-  "#898AC4",
-  "#03A6A1",
-  "#7AD6F0",
-  "#B388FF",
-  "#FF8A65",
-  "#FFD600",
+  "#0A84FF",
+  "#30D158",
+  "#FF9F0A",
+  "#FF375F",
+  "#5E5CE6",
+  "#64D2FF",
+  "#BF5AF2",
+  "#FFD60A",
 ];
   const chartId = "pingchart";
 
@@ -233,12 +234,38 @@ const PingChart = ({ uuid }: { uuid: string }) => {
       stacked: false,
       zoom: { enabled: false },
     },
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shade: theme === 'dark' ? 'dark' : 'light',
+        type: 'vertical',
+        shadeIntensity: 0.2,
+        opacityFrom: 0.25,
+        opacityTo: 0.0,
+        stops: [0, 90, 100],
+      },
+    },
+
     theme: { mode: theme === "dark" ? "dark" : "light" },
-    stroke: { curve: cutPeak ? "smooth" : "straight", width: 2 },
-    markers: { size: 0 },
+    stroke: {
+      curve: cutPeak ? 'smooth' : 'straight',
+      width: 2,
+      lineCap: 'round',
+    },
+    markers: {
+      size: 0,
+      hover: { size: 5 },
+      strokeWidth: 0,
+    },
+    grid: {
+      borderColor: theme === 'dark' ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.06)',
+      xaxis: { lines: { show: false } },
+      yaxis: { lines: { show: true } },
+    },
     dataLabels: { enabled: false },
-    grid: { xaxis: { lines: { show: false } }, yaxis: { lines: { show: true } } },
     xaxis: {
+
+
       type: "datetime",
       labels: {
         formatter: (val: string, timestamp?: number) => {

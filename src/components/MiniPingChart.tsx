@@ -31,15 +31,16 @@ interface PingApiResp {
 }
 
 //const MAX_POINTS = 1000;
+// Apple-inspired palette
 const colors = [
-  "#F38181",
-  "#347433",
-  "#898AC4",
-  "#03A6A1",
-  "#7AD6F0",
-  "#B388FF",
-  "#FF8A65",
-  "#FFD600",
+  "#0A84FF", // iOS Blue
+  "#30D158", // iOS Green
+  "#FF9F0A", // Orange
+  "#FF375F", // Pink/Red
+  "#5E5CE6", // Indigo
+  "#64D2FF", // Light Blue
+  "#BF5AF2", // Purple
+  "#FFD60A", // Yellow
 ];
 
 interface MiniPingChartProps {
@@ -162,10 +163,21 @@ const MiniPingChart = ({
     theme: {
       mode: theme === "dark" ? "dark" : "light",
     },
-    stroke: { curve: cutPeak ? "smooth" : "straight", width: 2 },
-    markers: { size: 0 },
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shade: theme === 'dark' ? 'dark' : 'light',
+        type: 'vertical',
+        shadeIntensity: 0.2,
+        opacityFrom: 0.25,
+        opacityTo: 0.0,
+        stops: [0, 90, 100],
+      },
+    },
+    stroke: { curve: cutPeak ? "smooth" : "straight", width: 2, lineCap: 'round' },
+    markers: { size: 0, hover: { size: 5 }, strokeWidth: 0 },
     dataLabels: { enabled: false },
-    grid: { xaxis: { lines: { show: false } }, yaxis: { lines: { show: true } } },
+    grid: { borderColor: theme === 'dark' ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.06)', xaxis: { lines: { show: false } }, yaxis: { lines: { show: true } } },
     xaxis: {
       type: "datetime",
       labels: {
@@ -243,13 +255,12 @@ const MiniPingChart = ({
           </ChartContainer>
         )
       )}
-      <div className="-mt-3 flex items-center" style={{ display: loading ? "none" : "flex" }}>
-        <Switch size="1" checked={cutPeak} onCheckedChange={setCutPeak} />
-        <label htmlFor="cut-peak" className="text-sm font-medium flex items-center gap-1 flex-row">
+      <div className="mt-2 px-2 pb-2 flex items-center" style={{ display: loading ? "none" : "flex" }}>
+        <Switch id="cut-peak-mini" size="1" checked={cutPeak} onCheckedChange={setCutPeak} />
+        <label htmlFor="cut-peak-mini" className="text-sm font-medium flex items-center gap-1 flex-row">
           {t("chart.cutPeak")}
           <Tips side="top"><span dangerouslySetInnerHTML={{ __html: t("chart.cutPeak_tips") }} /></Tips>
         </label>
-
       </div>
     </Card>
   );
